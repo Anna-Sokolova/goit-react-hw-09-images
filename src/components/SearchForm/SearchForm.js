@@ -1,61 +1,41 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import styles from './SearchForm.module.css';
 
-class SearchForm extends Component {
-  state = {
-    search: '',
-  };
+export default function SearchForm({ onSubmit }) {
+  const [search, setSearch] = useState('');
 
-  static defaulProps = {
-    search: '',
-  };
-
-  static propTypes = {
-    search: PropTypes.string,
-  };
-
-  handleChangeInput = e => {
+  const handleChangeInput = e => {
     // console.log(e.currentTarget.value);
     const { value } = e.currentTarget;
-    this.setState({
-      search: value,
-    });
+    setSearch(value);
   };
 
-  handleSubmitForm = e => {
+  const handleSubmitForm = e => {
     e.preventDefault();
-    // console.log(this.state);
-    this.props.onSubmit(this.state.search);
-    this.resetForm();
+
+    onSubmit(search);
+    resetForm();
   };
 
-  resetForm = () => {
-    this.setState({
-      search: '',
-    });
+  const resetForm = () => {
+    setSearch('');
   };
 
-  render() {
-    const { search } = this.state;
-    return (
-      <form className={styles.searchForm} onSubmit={this.handleSubmitForm}>
-        <button type="submit" className={styles.searchFormButton}>
-          <span className={styles.searchFormButtonLabel}>Search</span>
-        </button>
+  return (
+    <form className={styles.searchForm} onSubmit={handleSubmitForm}>
+      <button type="submit" className={styles.searchFormButton}>
+        <span className={styles.searchFormButtonLabel}>Search</span>
+      </button>
 
-        <input
-          className={styles.searchFormInput}
-          type="text"
-          autoComplete="off"
-          autoFocus
-          placeholder="Search images and photos"
-          value={search}
-          onChange={this.handleChangeInput}
-        />
-      </form>
-    );
-  }
+      <input
+        className={styles.searchFormInput}
+        type="text"
+        autoComplete="off"
+        autoFocus
+        placeholder="Search images and photos"
+        value={search}
+        onChange={handleChangeInput}
+      />
+    </form>
+  );
 }
-
-export default SearchForm;
