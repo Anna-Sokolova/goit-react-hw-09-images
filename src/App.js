@@ -3,6 +3,10 @@ import React, { useState, useEffect } from 'react';
 //import notify from 'react-toastify'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+//import scroll back to top
+import { addBackToTop } from 'vanilla-back-to-top';
+
 //services Api
 import pixabayApi from './services/pixabayApi';
 
@@ -27,9 +31,9 @@ export default function App() {
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
+  //useEffect для запроса за картинками
   useEffect(() => {
     if (!serchQuery) {
-      // alert('Введите корректный запрос пожалуйста!');
       toast.info('Введите корректный запрос пожалуйста!');
       return;
     }
@@ -43,11 +47,7 @@ export default function App() {
       pixabayApi
         .fetchImagesfromApi(options)
         .then(({ hits }) => {
-          // console.log(hits);
           if (hits.length === 0) {
-            // return alert(
-            //   `По вашему запросу ${serchQuery} нет данных! Поробуйте ещё раз)`,
-            // );
             return toast.warn(
               `По вашему запросу ${serchQuery} нет данных! Поробуйте ещё раз)`,
             );
@@ -67,6 +67,13 @@ export default function App() {
 
     fetchSearchImages();
   }, [currentPage, serchQuery]);
+
+  //useEffect для кнопки "back to top"
+  useEffect(() => {
+    addBackToTop({
+      backgroundColor: '#2d860a',
+    });
+  }, []);
 
   //функция, которая получает данные с формы и перезаписывает state App
   const onSubmitSearch = searchValue => {
