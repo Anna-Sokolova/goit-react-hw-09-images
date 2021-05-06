@@ -1,6 +1,8 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
 
+//import notify from 'react-toastify'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 //services Api
 import pixabayApi from './services/pixabayApi';
 
@@ -16,149 +18,119 @@ import Modal from './components/Modal';
 
 import styles from './App.module.css';
 
-class App extends Component {
-  state = {
-    images: [],
-    currentPage: 1,
-    serchQuery: 'love',
-    selectedImageModal: '',
-    isLoading: false,
-    hasError: false,
-    showModal: false,
-  };
+export default function App() {
+  const [images, setImages] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [serchQuery, setSerchQuery] = useState('love');
+  const [selectedImageModal, setSelectedImageModal] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
-  static defaultProps = {
-    images: [],
-    currentPage: 1,
-    serchQuery: '',
-    selectedImageModal: '',
-    isLoading: false,
-    hasError: false,
-    showModal: false,
-  };
-
-  static propTypes = {
-    images: PropTypes.arrayOf(PropTypes.object),
-    currentPage: PropTypes.number,
-    serchQuery: PropTypes.string,
-    selectedImageModal: PropTypes.string,
-    isLoading: PropTypes.bool,
-    hasError: PropTypes.bool,
-    showModal: PropTypes.bool,
-  };
-
-  componentDidMount() {
-    this.fetchSearchImages(); //делаем HTTP-запрос для отображения картинок на странице сразу, при монтировании компонента
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    //при обновлении компонента проверяем изменился ли state и делаем новый запрос для отрисовки
-    if (prevState.serchQuery !== this.state.serchQuery) {
-      this.fetchSearchImages();
+  useEffect(() => {
+    if (!serchQuery) {
+      // alert('Введите корректный запрос пожалуйста!');
+      toast.info('Введите корректный запрос пожалуйста!');
+      return;
     }
-  }
 
-  componentDidCatch(error, info) {
-    this.setState({ hasError: true });
-    console.log(error);
-  }
+    //создаем в useEffect get запрос
+    const fetchSearchImages = () => {
+      const options = { serchQuery, currentPage }; //передаем параметры в объекте настроек
 
-  fetchSearchImages = () => {
-    //выносим get запрос в отдельную функцию для удобства переиспользования
-    const { serchQuery, currentPage } = this.state;
-    const options = { serchQuery, currentPage }; //передаем параметры в объекте настроек
+      setIsLoading(true); //показываем спиннер пока идет запрос
 
-    this.setState({ isLoading: true }); //показываем спиннер пока идет запрос
+      pixabayApi
+        .fetchImagesfromApi(options)
+        .then(({ hits }) => {
+          // console.log(hits);
+          if (hits.length === 0) {
+            // return alert(
+            //   `По вашему запросу ${serchQuery} нет данных! Поробуйте ещё раз)`,
+            // );
+            return toast.warn(
+              `По вашему запросу ${serchQuery} нет данных! Поробуйте ещё раз)`,
+            );
+          }
+          setImages(prevImages => [...prevImages, ...hits]);
 
-    pixabayApi
-      .fetchImagesfromApi(options)
-      .then(({ hits }) => {
-        // console.log(hits);
+          if (currentPage > 1) {
+            window.scrollTo({
+              top: document.documentElement.scrollHeight,
+              behavior: 'smooth',
+            });
+          }
+        })
+        .catch(error => setError(error.message))
+        .finally(() => setIsLoading(false));
+    };
 
-        this.setState(prevState => ({
-          images: [...prevState.images, ...hits],
-          currentPage: prevState.currentPage + 1,
-        }));
+    fetchSearchImages();
+  }, [currentPage, serchQuery]);
 
-        if (currentPage > 1) {
-          window.scrollTo({
-            top: document.documentElement.scrollHeight,
-            behavior: 'smooth',
-          });
-        }
-      })
-      .catch(error => this.setState({ hasError: true }))
-      .finally(() => this.setState({ isLoading: false }));
-  };
-
-  //метод, который получает данные с формы и перезаписывает state App
-  onSubmitSearch = searchValue => {
+  //функция, которая получает данные с формы и перезаписывает state App
+  const onSubmitSearch = searchValue => {
     // console.log(searchValue);
-    this.setState({
-      serchQuery: searchValue, //сохраняем каждое новое значение с инпута в стейт для пагинации
-      images: [], //записываем пустой массив для отрисовки новых картинок по новому запросу
-      currentPage: 1, //сбрасываем currentPage в начальное состояние при новом запросе
-      hasError: false, //сбрасываем error в начальное состояние при новом запросе
-      selectedImageModal: '', //сбрасываем url картинки для модалки
-    });
+    setSerchQuery(searchValue); //сохраняем каждое новое значение с инпута в стейт для пагинации
+    setImages([]); //записываем пустой массив для отрисовки новых картинок по новому запросу
+    setCurrentPage(1); //сбрасываем currentPage в начальное состояние при новом запросе
+    setSelectedImageModal(''); //сбрасываем url картинки для модалки
+    setError(null); //сбрасываем error в начальное состояние при новом запросе
   };
 
-  handleClickBtnIncrement = () => {
-    //при клике на кнопку Load more делаем новый запрос на API
-    this.fetchSearchImages();
+  const handleClickBtnIncrement = () => {
+    //при клике на кнопку Load more увеличиваем
+    setCurrentPage(prevPage => prevPage + 1);
   };
 
   //метод для закрытия и открытия модалки
-  toggleModal = () => {
-    this.setState(state => ({
-      showModal: !this.state.showModal,
-    }));
+  const toggleModal = () => {
+    setShowModal(!showModal);
   };
 
   //метод для получения ссылки на большое изображение для модалки
-  handleLargeImageModal = url => {
-    this.setState({ selectedImageModal: url });
+  const handleLargeImageModal = url => {
+    setSelectedImageModal(url);
     // console.log(url);
-    this.toggleModal();
+    toggleModal();
   };
 
-  render() {
-    const {
-      images,
-      isLoading,
-      hasError,
-      selectedImageModal,
-      showModal,
-    } = this.state;
-
-    return (
-      <>
-        {hasError && alert('Something went wrong, please try again later :(')}
-        <Searchbar>
-          <Container>
-            <SearchForm onSubmit={this.onSubmitSearch} />
-          </Container>
-        </Searchbar>
-        <Section>
-          <Container className={styles.App}>
-            <div className={styles.App}>
-              <ImageGallery
-                images={images}
-                openlargeImageURL={this.handleLargeImageModal}
-              />
-              {isLoading && <Spinner />}
-              {images.length >= 12 && !isLoading && (
-                <Button onIncrement={this.handleClickBtnIncrement} />
-              )}
-            </div>
-            {showModal && (
-              <Modal onClose={this.toggleModal} url={selectedImageModal} />
+  return (
+    <>
+      {error && toast.error('Something went wrong, please try again later :(')}
+      <Searchbar>
+        <Container>
+          <SearchForm onSubmit={onSubmitSearch} />
+        </Container>
+      </Searchbar>
+      <Section>
+        <Container className={styles.App}>
+          <div className={styles.App}>
+            <ImageGallery
+              images={images}
+              openlargeImageURL={handleLargeImageModal}
+            />
+            {isLoading && <Spinner />}
+            {images.length >= 12 && !isLoading && (
+              <Button onIncrement={handleClickBtnIncrement} />
             )}
-          </Container>
-        </Section>
-      </>
-    );
-  }
+          </div>
+          {showModal && (
+            <Modal onClose={toggleModal} url={selectedImageModal} />
+          )}
+        </Container>
+      </Section>
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+    </>
+  );
 }
-
-export default App;
