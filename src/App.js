@@ -102,9 +102,14 @@ export default function App() {
     toggleModal();
   };
 
+  //метод для удаления картинки с галереи по id
+  const deleteImage = ImageId => {
+    setImages(prevImages => prevImages.filter(image => image.id !== ImageId));
+  };
+
   return (
     <>
-      {error && toast.error('Something went wrong, please try again later :(')}
+      {error && toast.error('Что-то пошло не так! Попробуйте позже :(')}
       <Searchbar>
         <Container>
           <SearchForm onSubmit={onSubmitSearch} />
@@ -116,6 +121,7 @@ export default function App() {
             <ImageGallery
               images={images}
               openlargeImageURL={handleLargeImageModal}
+              onDelete={deleteImage}
             />
             {isLoading && <Spinner />}
             {images.length >= 12 && !isLoading && (

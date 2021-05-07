@@ -1,0 +1,18 @@
+.IconButton {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  margin: 0;
+  padding: 10px;
+  border: none;
+  outline: none;
+  border-radius: 50%;
+  color: #fff;
+  font: inherit;
+  background-color: rgb(106, 167, 45);
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

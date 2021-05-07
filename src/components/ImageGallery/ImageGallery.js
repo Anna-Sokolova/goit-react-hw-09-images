@@ -2,11 +2,12 @@ import PropTypes from 'prop-types';
 import ImageGalleryItem from '../ImageGalleryItem';
 import styles from './ImageGallery.module.css';
 
-const ImageGallery = ({ images, openlargeImageURL }) => (
+const ImageGallery = ({ images, openlargeImageURL, onDelete }) => (
   <ul className={styles.imageGallery}>
     {images.map(({ id, webformatURL, tags, largeImageURL }) => {
-      
-      const getImageLink = () => openlargeImageURL(largeImageURL); //записываем инлайн коллбек в функцию для передачи как проп детям
+      //записываем инлайн коллбек в переменную для передачи как проп детям
+      const getImageLink = () => openlargeImageURL(largeImageURL); //получаем url большой картинки
+      const getImageIdForDelete = () => onDelete(id); //получаем id для удаления картинки из галлереи
 
       return (
         <ImageGalleryItem
@@ -15,6 +16,7 @@ const ImageGallery = ({ images, openlargeImageURL }) => (
           alt={tags}
           selectedImageModal={largeImageURL}
           onClick={getImageLink}
+          onDelete={getImageIdForDelete}
         />
       );
     })}
