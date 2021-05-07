@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/goit-react-hw-09-images/static/css/main.c52d95a3.chunk.css",
+    "main.js": "/goit-react-hw-09-images/static/js/main.fe56cefb.chunk.js",
+    "main.js.map": "/goit-react-hw-09-images/static/js/main.fe56cefb.chunk.js.map",
+    "runtime-main.js": "/goit-react-hw-09-images/static/js/runtime-main.4dc19de9.js",
+    "runtime-main.js.map": "/goit-react-hw-09-images/static/js/runtime-main.4dc19de9.js.map",
+    "static/css/2.e870c1d1.chunk.css": "/goit-react-hw-09-images/static/css/2.e870c1d1.chunk.css",
+    "static/js/2.19d0bf44.chunk.js": "/goit-react-hw-09-images/static/js/2.19d0bf44.chunk.js",
+    "static/js/2.19d0bf44.chunk.js.map": "/goit-react-hw-09-images/static/js/2.19d0bf44.chunk.js.map",
+    "index.html": "/goit-react-hw-09-images/index.html",
+    "static/css/2.e870c1d1.chunk.css.map": "/goit-react-hw-09-images/static/css/2.e870c1d1.chunk.css.map",
+    "static/css/main.c52d95a3.chunk.css.map": "/goit-react-hw-09-images/static/css/main.c52d95a3.chunk.css.map",
+    "static/js/2.19d0bf44.chunk.js.LICENSE.txt": "/goit-react-hw-09-images/static/js/2.19d0bf44.chunk.js.LICENSE.txt",
+    "static/media/delete.5d614aef.svg": "/goit-react-hw-09-images/static/media/delete.5d614aef.svg",
+    "static/media/ButtonClose.module.css": "/goit-react-hw-09-images/static/media/icon-close.83ea9b8a.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.4dc19de9.js",
+    "static/css/2.e870c1d1.chunk.css",
+    "static/js/2.19d0bf44.chunk.js",
+    "static/css/main.c52d95a3.chunk.css",
+    "static/js/main.fe56cefb.chunk.js"
+  ]
+}
